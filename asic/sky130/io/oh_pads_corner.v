@@ -12,6 +12,7 @@ module oh_pads_corner
    inout 	       vss // common ground
    );
 
+  (* keep *)
   sky130_ef_io__corner_pad corner (
     .VDDIO(),
     .VDDIO_Q(),

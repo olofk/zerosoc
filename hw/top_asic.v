@@ -1,5 +1,4 @@
 module top_asic (
-    /*
     inout vdd,
     inout vss,
 
@@ -18,7 +17,6 @@ module top_asic (
     inout we_vddio,
     inout we_vssio,
     inout [8:0] we_pad
-    */
 );
 
     wire uart_tx;
@@ -68,6 +66,7 @@ module top_asic (
     wire [8:0]  ea_ie;
     wire [8:0]  ea_oen;
 
+/*
     // Padring I/O
     // HACK: we can't expose these as module I/O, since that screws up OpenROAD
     // PnR. Instead, just make them wires and mark them as keep.
@@ -89,6 +88,7 @@ module top_asic (
     (* keep *) wire we_vddio;
     (* keep *) wire we_vssio;
     (* keep *) wire [8:0] we_pad;
+    */
 
     oh_padring #(
         .TYPE("SOFT"),
@@ -157,28 +157,32 @@ module top_asic (
         .ea_oen // output enable (bar)
     );
 
-    oh_pads_corner corner_sw (
+    (* keep_hierarchy *)
+    (* keep *) oh_pads_corner corner_sw (
         .vdd(vdd),
         .vss(vss),
         .vddio(vddio),
         .vssio(vssio)
     );
 
-    oh_pads_corner corner_nw (
+    (* keep_hierarchy *)
+    (* keep *) oh_pads_corner corner_nw (
         .vdd(vdd),
         .vss(vss),
         .vddio(vddio),
         .vssio(vssio)
     );
 
-    oh_pads_corner corner_ne (
+    (* keep_hierarchy *)
+    (* keep *) oh_pads_corner corner_ne (
         .vdd(vdd),
         .vss(vss),
         .vddio(vddio),
         .vssio(vssio)
     );
 
-    oh_pads_corner corner_se (
+    (* keep_hierarchy *)
+    (* keep *) oh_pads_corner corner_se (
         .vdd(vdd),
         .vss(vss),
         .vddio(vddio),
@@ -217,5 +221,86 @@ module top_asic (
     assign so_oen = ~gpio_en_o[31:23];
     assign so_ie = so_oen;
     assign so_cfg = 72'b0;
+
+    // Fill cells for completing power ring
+    // The number of each required is determined by our floorplan script and
+    // passed in as a preprocessor macro.
+    generate
+        genvar i;
+            
+        for(i=0;i<`NUM_SLICE1;i=i+1) begin: fill1
+            (* keep_hierarchy *)
+            (* keep *)
+            sky130_ef_io__com_bus_slice_1um fillcell (
+                .AMUXBUS_A(),
+                .AMUXBUS_B(),
+                .VDDIO(),
+                .VDDIO_Q(),
+                .VDDA(),
+                .VCCD(),
+                .VSWITCH(),
+                .VCCHIB(),
+                .VSSA(),
+                .VSSD(),
+                .VSSIO_Q(),
+                .VSSIO()
+            );
+        end
+        for(i=0;i<`NUM_SLICE5;i=i+1) begin: fill5
+            (* keep_hierarchy *)
+            (* keep *)
+            sky130_ef_io__com_bus_slice_5um fillcell (
+                .AMUXBUS_A(),
+                .AMUXBUS_B(),
+                .VDDIO(),
+                .VDDIO_Q(),
+                .VDDA(),
+                .VCCD(),
+                .VSWITCH(),
+                .VCCHIB(),
+                .VSSA(),
+                .VSSD(),
+                .VSSIO_Q(),
+                .VSSIO()
+            );
+        end
+        for(i=0;i<`NUM_SLICE10;i=i+1) begin: fill10
+            (* keep_hierarchy *)
+            (* keep *)
+            sky130_ef_io__com_bus_slice_10um fillcell (
+                .AMUXBUS_A(),
+                .AMUXBUS_B(),
+                .VDDIO(),
+                .VDDIO_Q(),
+                .VDDA(),
+                .VCCD(),
+                .VSWITCH(),
+                .VCCHIB(),
+                .VSSA(),
+                .VSSD(),
+                .VSSIO_Q(),
+                .VSSIO()
+            );
+        end
+        for(i=0;i<`NUM_SLICE20;i=i+1) begin: fill20
+            (* keep_hierarchy *)
+            (* keep *)
+            sky130_ef_io__com_bus_slice_20um fillcell (
+                .AMUXBUS_A(),
+                .AMUXBUS_B(),
+                .VDDIO(),
+                .VDDIO_Q(),
+                .VDDA(),
+                .VCCD(),
+                .VSWITCH(),
+                .VCCHIB(),
+                .VSSA(),
+                .VSSD(),
+                .VSSIO_Q(),
+                .VSSIO()
+            );
+        end
+
+    endgenerate
 
 endmodule

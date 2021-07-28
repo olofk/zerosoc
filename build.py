@@ -1,5 +1,7 @@
 import argparse
 import siliconcompiler as sc
+from siliconcompiler.floorplan import Floorplan
+from asic.sky130.floorplan import make_floorplan
 import os
 import importlib
 
@@ -155,6 +157,19 @@ def main():
 
     chip.set_jobid()
     chip.target()
+
+    # Hack to let us to include the correct #s of fill cells in Verilog
+    # we call this here because floorplan library requires chip has been set up
+    # with target() call
+    if not options.fpga and options.target == 'sky130':
+        fp = Floorplan(chip)
+        _, fill_1, fill_5, fill_10, fill_20 = make_floorplan(fp)
+
+        chip.add('define', f'NUM_SLICE1={fill_1}')
+        chip.add('define', f'NUM_SLICE5={fill_5}')
+        chip.add('define', f'NUM_SLICE10={fill_10}')
+        chip.add('define', f'NUM_SLICE20={fill_20}')
+
 
     # TODO: hack - CTS currently doesn't work
     if not options.fpga:
