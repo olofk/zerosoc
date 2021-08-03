@@ -71,28 +71,28 @@ def configure_asic_freepdk45(chip):
     chip.set('macro', macro, 'cells', 'fill50', 'FILLER50')
 
 def configure_asic_sky130(chip):
-    chip.add('design', 'top_asic')
+    chip.add('design', 'zerosoc')
 
     chip.set('target', 'skywater130_asic-sv2v')
     chip.add('define', 'PRIM_DEFAULT_IMPL="prim_pkg::ImplSky130"')
     chip.add('define', 'RAM_DEPTH=512')
 
-    chip.add('source', 'hw/top_asic.v')
-    chip.add('source', 'oh/padring/hdl/oh_padring.v')
-    chip.add('source', 'oh/padring/hdl/oh_pads_domain.v')
+    # chip.add('source', 'hw/top_asic.v')
+    # chip.add('source', 'oh/padring/hdl/oh_padring.v')
+    # chip.add('source', 'oh/padring/hdl/oh_pads_domain.v')
 
-    chip.add('source', 'asic/sky130/io/asic_iobuf.v')
-    chip.add('source', 'asic/sky130/io/asic_iocut.v')
-    chip.add('source', 'asic/sky130/io/asic_iopoc.v')
-    chip.add('source', 'asic/sky130/io/asic_iovdd.v')
-    chip.add('source', 'asic/sky130/io/asic_iovddio.v')
-    chip.add('source', 'asic/sky130/io/asic_iovss.v')
-    chip.add('source', 'asic/sky130/io/asic_iovssio.v')
-    chip.add('source', 'asic/sky130/io/oh_pads_corner.v')
+    # chip.add('source', 'asic/sky130/io/asic_iobuf.v')
+    # chip.add('source', 'asic/sky130/io/asic_iocut.v')
+    # chip.add('source', 'asic/sky130/io/asic_iopoc.v')
+    # chip.add('source', 'asic/sky130/io/asic_iovdd.v')
+    # chip.add('source', 'asic/sky130/io/asic_iovddio.v')
+    # chip.add('source', 'asic/sky130/io/asic_iovss.v')
+    # chip.add('source', 'asic/sky130/io/asic_iovssio.v')
+    # chip.add('source', 'asic/sky130/io/oh_pads_corner.v')
 
-    chip.add('source', 'asic/bb_iocell.v')
+    # chip.add('source', 'asic/bb_iocell.v')
 
-    chip.set('asic', 'floorplan', 'asic/sky130/floorplan.py')
+    chip.set('asic', 'floorplan', 'asic/sky130/floorplan/core.py')
 
     macro = 'ram'
     chip.add('asic', 'macrolib', macro)
@@ -139,7 +139,7 @@ def configure_fpga(chip):
 def main():
     parser = argparse.ArgumentParser(description='Build ZeroSoC')
     parser.add_argument('--fpga', action='store_true', default=False, help='Build for ice40 FPGA (build ASIC by default)')
-    parser.add_argument('-a', '--start', default='import', help='Start step')
+    parser.add_argument('-a', '--start', default='validate', help='Start step')
     parser.add_argument('-z', '--stop', default='export', help='Stop step')
     parser.add_argument('-t', '--target', default='freepdk45', help='ASIC target ("freepdk45" or "sky130")')
     parser.add_argument('-f', '--test-floorplan', action='store_true', default=False, help='Test floorplan')
@@ -157,8 +157,8 @@ def main():
     chip.target()
 
     # TODO: hack - CTS currently doesn't work
-    if not options.fpga:
-        chip.cfg['steplist']['value'].remove('cts')
+    # if not options.fpga:
+    #     chip.cfg['steplist']['value'].remove('cts')
 
     if options.test_floorplan:
         fp_path = chip.get('asic', 'floorplan')[-1]

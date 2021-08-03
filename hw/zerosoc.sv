@@ -7,7 +7,7 @@ module zerosoc #(
 ) (
   // Clock and Reset
   input        clk_i,
-  input        rst_ni,
+  input        rstn_i,
 
   input        uart_rx_i,
   output logic uart_tx_o,
@@ -66,7 +66,7 @@ module zerosoc #(
   ) u_rv_core_ibex (
     // clock and reset
     .clk_i                (clk_i),
-    .rst_ni               (rst_ni),
+    .rst_ni               (rstn_i),
     // Don't use "escalation receiver"
     .clk_esc_i            (1'b0),
     .rst_esc_ni           (1'b1),
@@ -126,7 +126,7 @@ module zerosoc #(
     .EnableDataIntgGen(1)
   ) tl_adapter_ram (
     .clk_i   (clk_i),
-    .rst_ni   (rst_ni),
+    .rst_ni   (rstn_i),
     .tl_i     (tl_ram_d_h2d),
     .tl_o     (tl_ram_d_d2h),
     .en_ifetch_i(tlul_pkg::InstrEn),  // enable requests with "Instruction" type
@@ -151,7 +151,7 @@ module zerosoc #(
     .MemInitFile(RamInitFile)
   ) ram (
     .clk_i    (clk_i),
-    .rst_ni   (rst_ni),
+    .rst_ni   (rstn_i),
 
     .req_i    (ram_req),
     .write_i  (ram_we),
@@ -167,7 +167,7 @@ module zerosoc #(
 
   gpio gpio (
       .clk_i (clk_i),
-      .rst_ni (rst_ni),
+      .rst_ni (rstn_i),
 
       // Input
       .cio_gpio_i    (gpio_i),
@@ -206,12 +206,12 @@ module zerosoc #(
       .intr_rx_parity_err_o (intr_uart_rx_parity_err),
 
       .clk_i (clk_i),
-      .rst_ni (rst_ni)
+      .rst_ni (rstn_i)
   );
 
   xbar xbar (
     .clk_i (clk_i),
-    .rst_ni (rst_ni),
+    .rst_ni (rstn_i),
 
     // host interfaces
     .tl_corei_i     (tl_corei_h_h2d),
