@@ -21,44 +21,40 @@ def floorplan_dims(fp):
     core_w = die_w - 2 * gpio_h
     core_h = die_h - 2 * gpio_h
 
-    we_io = [('gpio', i)  for i in range(5)] + [('clk', None), ('rstn', None), ('uart_rx', None), ('uart_tx', None)]
-    n = len(we_io)
+    n = 9
     spacing = (die_h - corner_h - corner_w - n * gpio_w) // (n + 1)
 
     y = corner_h + spacing
     we_pads = []
-    for name, num in we_io:
-        we_pads.append((name, num, y))
+    for _ in range(n):
+        we_pads.append(y)
         y += gpio_w + spacing
 
-    no_io = [('gpio', i) for i in range(5, 14)]
-    n = len(no_io)
+    n = 9
     spacing = (die_w - corner_h - corner_w - n * gpio_w) // (n + 1)
 
     x = corner_h + spacing
     no_pads = []
-    for name, num in no_io:
-        no_pads.append((name, num, x))
+    for _ in range(n):
+        no_pads.append(x)
         x += gpio_w + spacing
 
-    ea_io = [('gpio', i) for i in range(14, 23)]
-    n = len(ea_io)
+    n = 9
     spacing = (die_h - corner_h - corner_w - n * gpio_w) // (n + 1)
 
     y = corner_w + spacing
     ea_pads = []
-    for name, num in ea_io:
-        ea_pads.append((name, num, y))
+    for _ in range(n):
+        ea_pads.append(y)
         y += gpio_w + spacing
 
-    so_io = [('gpio', i) for i in range(23, 32)]
-    n = len(so_io)
+    n = 9
     spacing = (die_w - corner_h - corner_w - n * gpio_w) // (n + 1)
 
     x = corner_w + spacing
     so_pads = []
-    for name, num in so_io:
-        so_pads.append((name, num, x))
+    for _ in range(n):
+        so_pads.append(x)
         x += gpio_w + spacing
 
     return die_w, die_h, core_w, core_h, place_w, place_h, we_pads, no_pads, ea_pads, so_pads

@@ -27,17 +27,17 @@ def setup_floorplan(fp, chip):
     fp.place_macros([('corner_ne', 'corner')], die_w - corner_w, die_h - corner_h, 0, 0, 'N')
 
     # Place I/O pads
-    for name, num, y in we_pads:
-        if num is not None: name += f'[{num}]'
+    for i, y in enumerate(we_pads):
+        name = f'we_pad{i}'
         fp.place_macros([(name, 'gpio')], 0, y, 0, 0, 'W')
-    for name, num, x in no_pads:
-        if num is not None: name += f'[{num}]'
+    for i, x in enumerate(no_pads):
+        name = f'no_pad{i}'
         fp.place_macros([(name, 'gpio')], x, die_h - gpio_h, 0, 0, 'N')
-    for name, num, y in ea_pads:
-        if num is not None: name += f'[{num}]'
+    for i, y in enumerate(ea_pads):
+        name = f'ea_pad{i}'
         fp.place_macros([(name, 'gpio')], die_w - gpio_h, y, 0, 0, 'E')
-    for name, num, x in so_pads:
-        if num is not None: name += f'[{num}]'
+    for i, x in enumerate(so_pads):
+        name = f'so_pad{i}'
         fp.place_macros([(name, 'gpio')], x, 0, 0, 0, 'S')
     
     # Fill I/O region

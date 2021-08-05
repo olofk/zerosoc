@@ -30,7 +30,7 @@ def setup_floorplan(fp, chip):
     # Place RAM
     # Must be placed outside core area to ensure we don't run into routing
     # congestion issues (due to cells being placed too close to RAM pins)
-    fp.place_macros([('ram.u_mem.gen_sky130.u_impl_sky130.genblk1.mem', 'ram')], ram_x, ram_y, 0, 0, 'N')
+    fp.place_macros([('soc.ram.u_mem.gen_sky130.u_impl_sky130.genblk1.mem', 'ram')], ram_x, ram_y, 0, 0, 'N')
 
     # Place pins
     oe_offset = 4.245
@@ -39,48 +39,51 @@ def setup_floorplan(fp, chip):
     pin_width = 0.28
     pin_depth = 1
 
-    for name, num, y in we_pads:
-        oe_pin = f'{name}_en_o' + (f'[{num}]' if num is not None else '')
-        out_pin = f'{name}_o' + (f'[{num}]' if num is not None else '')
-        in_pin = f'{name}_i' + (f'[{num}]' if num is not None else '')
+    pins = [
+        ('din', 0, 1, 75.085), # in
+        ('dout', 0, 1, 19.885), # out
+        ('ie', 0, 1, 41.505), # inp_dis
+        ('oen', 0, 1, 4.245), # oe_n
+        ('tech_cfg', 0, 16, 31.845), # hld_h_n
+        ('tech_cfg', 1, 16, 35.065), # enable_h
+        ('tech_cfg', 2, 16, 38.285), # enable_inp_h
+        ('tech_cfg', 3, 16, 13.445), # enable_vdda_h
+        ('tech_cfg', 4, 16, 31.845), # enable_vswitch_h
+        ('tech_cfg', 5, 16, 69.105), # enable_vddio
+        ('tech_cfg', 6, 16, 7.465), # ib_mode_sel
+        ('tech_cfg', 7, 16, 10.685), # vtrip_sel
+        ('tech_cfg', 8, 16, 65.885), # slow
+        ('tech_cfg', 9, 16, 22.645), # hld_ovr
+        ('tech_cfg', 10, 16, 50.705), # analog_en
+        ('tech_cfg', 11, 16, 29.085), # analog_sel
+        ('tech_cfg', 12, 16, 44.265), # analog_pol
+        ('tech_cfg', 13, 16, 47.485), # dm[0]
+        ('tech_cfg', 14, 16, 56.685), # dm[1]
+        ('tech_cfg', 15, 16, 25.865), # dm[2]
+    ]
 
+    for i, y in enumerate(we_pads):
         y -= gpio_h
+        for pin, bit, width, offset in pins:
+            name = f'we_{pin}[{i * width + bit}]'
+            fp.place_pins([name], 0, y + offset, 0, 0, pin_depth, pin_width, 'm2')
 
-        fp.place_pins([oe_pin], 0, y + oe_offset, 0, 0, pin_depth, pin_width, 'm2')
-        fp.place_pins([out_pin], 0, y + out_offset, 0, 0, pin_depth, pin_width, 'm2')
-        fp.place_pins([in_pin], 0, y + in_offset, 0, 0, pin_depth, pin_width, 'm2')
-
-    for name, num, x in no_pads:
-        oe_pin = f'{name}_en_o' + (f'[{num}]' if num is not None else '')
-        out_pin = f'{name}_o' + (f'[{num}]' if num is not None else '')
-        in_pin = f'{name}_i' + (f'[{num}]' if num is not None else '')
-
+    for i, x in enumerate(no_pads):
         x -= gpio_h
+        for pin, bit, width, offset in pins:
+            name = f'no_{pin}[{i * width + bit}]'
+            fp.place_pins([name], x + offset, die_h - pin_depth, 0, 0, pin_width, pin_depth, 'm2')
 
-        fp.place_pins([oe_pin], x + oe_offset, die_h - pin_depth, 0, 0, pin_width, pin_depth, 'm2')
-        fp.place_pins([out_pin], x + out_offset, die_h - pin_depth, 0, 0, pin_width, pin_depth, 'm2')
-        fp.place_pins([in_pin], x + in_offset, die_h - pin_depth, 0, 0, pin_width, pin_depth, 'm2')
-
-    for name, num, y in ea_pads:
-        oe_pin = f'{name}_en_o' + (f'[{num}]' if num is not None else '')
-        out_pin = f'{name}_o' + (f'[{num}]' if num is not None else '')
-        in_pin = f'{name}_i' + (f'[{num}]' if num is not None else '')
-
+    for i, y in enumerate(ea_pads):
         y -= gpio_h 
+        for pin, bit, width, offset in pins:
+            name = f'ea_{pin}[{i * width + bit}]'
+            fp.place_pins([name], die_w - pin_depth, y + gpio_w - offset - pin_width, 0, 0, pin_depth, pin_width, 'm2')
 
-        fp.place_pins([oe_pin], die_w - pin_depth, y + gpio_w - oe_offset - pin_width, 0, 0, pin_depth, pin_width, 'm2')
-        fp.place_pins([out_pin], die_w - pin_depth, y + gpio_w - out_offset - pin_width, 0, 0, pin_depth, pin_width, 'm2')
-        fp.place_pins([in_pin], die_w - pin_depth, y + gpio_w - in_offset - pin_width, 0, 0, pin_depth, pin_width, 'm2')
-
-    for name, num, x in so_pads:
-        oe_pin = f'{name}_en_o' + (f'[{num}]' if num is not None else '')
-        out_pin = f'{name}_o' + (f'[{num}]' if num is not None else '')
-        in_pin = f'{name}_i' + (f'[{num}]' if num is not None else '')
-
+    for i, x in enumerate(so_pads):
         x -= gpio_h
-
-        fp.place_pins([oe_pin], x + gpio_w - oe_offset - pin_width, 0, 0, 0, pin_width, pin_depth, 'm2')
-        fp.place_pins([out_pin], x + gpio_w - out_offset - pin_width, 0, 0, 0, pin_width, pin_depth, 'm2')
-        fp.place_pins([in_pin], x + gpio_w - in_offset - pin_width, 0, 0, 0, pin_width, pin_depth, 'm2')
-    
+        for pin, bit, width, offset in pins:
+            name = f'so_{pin}[{i * width + bit}]'
+            fp.place_pins([name], x + gpio_w - offset - pin_width, 0, 0, 0, pin_width, pin_depth, 'm2')
+   
     return fp
