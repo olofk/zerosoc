@@ -73,7 +73,7 @@ def configure_asic_freepdk45(chip):
 def configure_asic_sky130(chip):
     chip.add('design', 'zerosoc')
 
-    chip.set('target', 'skywater130_asic-sv2v')
+    chip.set('target', 'skywater130_svasicflow')
     chip.add('define', 'PRIM_DEFAULT_IMPL="prim_pkg::ImplSky130"')
     chip.add('define', 'RAM_DEPTH=512')
 
