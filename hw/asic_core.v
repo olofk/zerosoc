@@ -17,7 +17,7 @@ module asic_core (
     output [8:0]  so_oen,
     output [143:0] so_tech_cfg,
 
-    input [8:0]  ea_din;
+    input [8:0]  ea_din,
     output [8:0]  ea_dout,
     output [8:0]  ea_ie,
     output [8:0]  ea_oen,
