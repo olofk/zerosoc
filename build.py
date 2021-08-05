@@ -139,7 +139,7 @@ def configure_fpga(chip):
 def main():
     parser = argparse.ArgumentParser(description='Build ZeroSoC')
     parser.add_argument('--fpga', action='store_true', default=False, help='Build for ice40 FPGA (build ASIC by default)')
-    parser.add_argument('-a', '--start', default='validate', help='Start step')
+    parser.add_argument('-a', '--start', default='import', help='Start step')
     parser.add_argument('-z', '--stop', default='export', help='Stop step')
     parser.add_argument('-t', '--target', default='freepdk45', help='ASIC target ("freepdk45" or "sky130")')
     parser.add_argument('-f', '--test-floorplan', action='store_true', default=False, help='Test floorplan')

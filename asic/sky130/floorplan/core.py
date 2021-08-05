@@ -30,7 +30,7 @@ def setup_floorplan(fp, chip):
     # Place RAM
     # Must be placed outside core area to ensure we don't run into routing
     # congestion issues (due to cells being placed too close to RAM pins)
-    fp.place_macros([('ram.u_mem.gen_sky130.u_impl_sky130.mem', 'ram')], ram_x, ram_y, 0, 0, 'N')
+    fp.place_macros([('ram.u_mem.gen_sky130.u_impl_sky130.genblk1.mem', 'ram')], ram_x, ram_y, 0, 0, 'N')
 
     # Place pins
     oe_offset = 4.245
