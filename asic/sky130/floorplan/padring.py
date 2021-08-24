@@ -9,7 +9,7 @@ def setup_floorplan(fp, chip):
     # TODO: this should be automatically set to a valid value
     fp.db_units = 1000
 
-    die_w, die_h, core_w, core_h, _, _ = define_dimensions(fp)
+    ((die_w, die_h), _), _ = define_dimensions(fp)
     we_pads, no_pads, ea_pads, so_pads = define_io_placement(fp)
 
     gpio_w = fp.available_cells['gpio'].width

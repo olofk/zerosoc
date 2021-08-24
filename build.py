@@ -153,6 +153,7 @@ def configure_asic_top(chip, start, stop):
 
     libname = 'core'
     chip.add('asic', 'macrolib', libname)
+    chip.set('library', libname, 'type', 'component')
     chip.set('library', libname, 'lef', 'asic_core.lef')
     chip.set('library', libname, 'gds', 'asic_core.gds')
     chip.set('library', libname, 'cells', 'asic_core', 'asic_core')

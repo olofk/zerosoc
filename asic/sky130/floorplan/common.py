@@ -6,8 +6,8 @@ def define_dimensions(fp):
 
     place_w = 6750 * fp.std_cell_width
     place_h = 900 * fp.std_cell_height
-    margin_x = 60 * fp.std_cell_width
-    margin_y = 10 * fp.std_cell_height
+    margin_x = 150 * fp.std_cell_width
+    margin_y = 25 * fp.std_cell_height
 
     core_w = math.ceil(place_w + 2 * margin_x)
     core_h = math.ceil(place_h + 2 * margin_y)
@@ -18,7 +18,8 @@ def define_dimensions(fp):
     assert die_w % 1 == 0
     assert die_h % 1 == 0
 
-    return die_w, die_h, core_w, core_h, place_w, place_h
+    return ((die_w, die_h), (gpio_h, gpio_h, core_w + gpio_h, core_h + gpio_h)),
+           ((core_w, core_h), (margin_x, margin_y, margin_x + place_w, margin_y + place_h))
 
 def calculate_even_spacing(fp, pads, distance):
     n = len(pads)
@@ -28,16 +29,16 @@ def calculate_even_spacing(fp, pads, distance):
     return spacing
 
 def define_io_placement(fp):
-    die_w, die_h, _, _, _, _ = define_dimensions(fp)
-
-    corner_w = fp.available_cells['corner'].width
-    corner_h = fp.available_cells['corner'].height
-
     # Define I/O arrangement on each side
     we_io = ['gpio'] * 5 + ['vdd', 'vss', 'vddio', 'vssio'] + ['gpio'] * 4
     no_io = ['gpio'] * 9 + ['vdd', 'vss', 'vddio', 'vssio']
     ea_io = ['gpio'] * 9 + ['vdd', 'vss', 'vddio', 'vssio']
     so_io = ['gpio'] * 5 + ['vdd', 'vss', 'vddio', 'vssio'] + ['gpio'] * 4
+
+    die_w, die_h, _, _, _, _ = define_dimensions(fp)
+
+    corner_w = fp.available_cells['corner'].width
+    corner_h = fp.available_cells['corner'].height
 
     # Calculate location of each I/O pad
     spacing = calculate_even_spacing(fp, we_io, die_h - corner_h - corner_w)
